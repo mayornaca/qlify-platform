@@ -1,0 +1,37 @@
+services:
+    qlify:
+        container_name: qlify
+        restart: always
+        working_dir: /var/www/html
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        networks:
+            - qlify
+        depends_on:
+            - postgres
+            - redis
+            - soketi
+    postgres:
+        image: postgres:15-alpine
+        container_name: qlify-db
+        restart: always
+        networks:
+            - qlify
+    redis:
+        image: redis:alpine
+        container_name: qlify-redis
+        restart: always
+        networks:
+            - qlify
+    soketi:
+        container_name: qlify-realtime
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        restart: always
+        networks:
+            - qlify
+networks:
+    qlify:
+        name: qlify
+        driver: bridge
+        external: false
